@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Covid19 Tracker</string>
+    <string name="deathMsg">Total Deaths till Now</string>
+    <string name="totalMsg">Total Cases of India</string>
+    <string name="todayMsg">Total Cases Reported Today</string>
+</resources>
