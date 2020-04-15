@@ -17,9 +17,11 @@ public class MainActivity extends AppCompatActivity {
     TextView tvDeathData;
     TextView tvToday;
     TextView tvTodayData;
+    TextView tvRecover, tvRecoverData;
     public String mTotalData;
     public String mDeathData;
     public String mTodayData;
+    public String mRecoverData;
 
     /*String totalMsg="Total Cases of India";
     String todayMsg="Total Cases reported today";*/
@@ -46,18 +48,8 @@ public class MainActivity extends AppCompatActivity {
     tvTodayData = findViewById(R.id.tvTodayData);
     tvDeath=findViewById(R.id.tvDeath);
     tvDeathData=findViewById(R.id.tvDeathData);
-
-    /*tvStatus = findViewById(R.id.status);
-        tvTemp = findViewById(R.id.temp);
-        tvTemp_min = findViewById(R.id.temp_min);
-        tvTemp_max = findViewById(R.id.temp_max);
-        tvSunrise = findViewById(R.id.sunrise);
-        tvSunset = findViewById(R.id.sunset);
-        tvWind = findViewById(R.id.wind);
-        tvPressure = findViewById(R.id.pressure);
-        tvHumidity = findViewById(R.id.humidity);
-        themeSwitchImg = findViewById(R.id.btnTheme);
-        searchCityImg = findViewById(R.id.citySelect);*/
+    tvRecover=findViewById(R.id.tvRecover);
+    tvRecoverData=findViewById(R.id.tvRecoveredData);
 
         if (savedInstanceState == null ) {
             new tracker().execute();
@@ -65,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
             restoreState(savedInstanceState);
             setUIValues();
         }
-
     }
 
     protected void setUIValues(){
@@ -78,22 +69,15 @@ public class MainActivity extends AppCompatActivity {
         tvTodayData.setText(mTodayData);
         tvDeath.setText(R.string.deathMsg);
         tvDeathData.setText(mDeathData);
-
-        /*tvStatus.setText(mWeatherDescription);
-        tvTemp.setText(mTemp);
-        tvTemp_min.setText(mTempMin);
-        tvTemp_max.setText(mTempMax);
-        tvSunrise.setText(mSunrise);
-        tvSunset.setText(mSunset);
-        tvWind.setText(mWindSpeed);
-        tvPressure.setText(mPressure);
-        tvHumidity.setText(mHumidity);*/
+        tvRecover.setText("Total Recovered Cases");
+        tvRecoverData.setText(mRecoverData);
     }
 
     protected void restoreState(Bundle savedInstanceState) {
         mTotalData = savedInstanceState.getString(mTotalData);
         mTodayData = savedInstanceState.getString(mTodayData);
         mDeathData= savedInstanceState.getString(mDeathData);
+        mRecoverData=savedInstanceState.getString(mRecoverData);
     }
 
     @Override
@@ -101,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putString(String.valueOf(tvTotalData),mTotalData);
         outState.putString(String.valueOf(tvTodayData),mTodayData);
         outState.putString(String.valueOf(tvDeathData),mDeathData);
+        outState.putString(String.valueOf(tvRecoverData),mRecoverData);
         super.onSaveInstanceState(outState);
     }
 
@@ -108,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
     class tracker extends AsyncTask<String, Void, String> {
         protected void onPreExecute() {
             super.onPreExecute();
+            /* Showing the ProgressBar, Making the main design GONE */
+            findViewById(R.id.loader).setVisibility(View.VISIBLE);
+            findViewById(R.id.mainContainer).setVisibility(View.GONE);
+            findViewById(R.id.errorText).setVisibility(View.GONE);
         }
 
         @Override
@@ -126,41 +115,34 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject wind = jsonObj.getJSONObject("wind");
                 JSONObject weather = jsonObj.getJSONArray("weather").getJSONObject(0);*/
 
-                String updatedAt = jsonObj.getString("cases");
-                mTotalData = updatedAt;
 
+                mTotalData = jsonObj.getString("active");
                 mTodayData=jsonObj.getString("todayCases");
                 mDeathData=jsonObj.getString("deaths");
-                //String s = "Success";
-                //Log.i("LOG Message", s);
+                mRecoverData=jsonObj.getString("recovered");
+
+
                 /*mTemp = main.getString("temp") + "°C";
                 mTempMin = "Min Temp: " + main.getString("temp_min") + "°C";
                 mTempMax = "Max Temp: " + main.getString("temp_max") + "°C";
                 mPressure = main.getString("pressure");
-                mHumidity = main.getString("humidity");*/
-
-                /*mSunrise = new SimpleDateFormat("hh:mm a", Locale.ENGLISH).format(new Date(sys.getLong("sunrise") * 1000));
-                mSunset = new SimpleDateFormat("hh:mm a", Locale.ENGLISH).format(new Date(sys.getLong("sunset") * 1000));
+                mHumidity = main.getString("humidity");
                 mWindSpeed = wind.getString("speed");
-                mWeatherDescription = (weather.getString("description")).toUpperCase();*/
-
-                /*mAddress = jsonObj.getString("name") + ", " + sys.getString("country");*/
+                mWeatherDescription = (weather.getString("description")).toUpperCase();
+                mAddress = jsonObj.getString("name") + ", " + sys.getString("country");*/
 
 
                     /* Populating extracted data into our views */
+
                 setUIValues();
-                //tvTotalData.setText(mTotalData);
-                //findViewById(R.id.tvTotalData).setVisibility(View.VISIBLE);
 
                 /*Views populated, Hiding the loader, Showing the main design */
-                /*findViewById(R.id.loader).setVisibility(View.GONE);
-                findViewById(R.id.mainContainer).setVisibility(View.VISIBLE);*/
 
-
+                findViewById(R.id.loader).setVisibility(View.GONE);
+                findViewById(R.id.mainContainer).setVisibility(View.VISIBLE);
             } catch (JSONException e) {
-                /*findViewById(R.id.loader).setVisibility(View.GONE);*/
-                tvTotalData.setText("Error");
-                findViewById(R.id.tvTotalData).setVisibility(View.VISIBLE);
+                findViewById(R.id.loader).setVisibility(View.GONE);
+                findViewById(R.id.errorText).setVisibility(View.VISIBLE);
             }
         }
     }
